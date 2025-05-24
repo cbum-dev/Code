@@ -1,9 +1,12 @@
+import Header from '@/components/ui/custom/Header'
+import Hero from '@/components/ui/custom/Hero'
 import React from 'react'
 
 function page() {
   return (
     <div>
-      <h1>hello world</h1>
+      <Header/>
+      <Hero/>
     </div>
   )
 }
