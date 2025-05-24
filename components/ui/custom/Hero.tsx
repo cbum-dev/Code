@@ -1,10 +1,15 @@
 "use client";
 import { Link } from "lucide-react";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import { MessageContext } from "@/context/MessageContext";
+import { UserDetailContext } from "@/context/UserDetailContext";
+import SIgnInDialog from "./SIgnInDialog";
 
 function Hero() {
   const [userInput, setUserInput] = useState<string>("");
-
+  const {messages, setMessages} = useContext<any>(MessageContext);
+  const {userDetails, setUserDetails} = useContext(UserDetailContext);
+  const [openDialog, setOpenDialog] = useState(false);
   const showtextcontent = () => {
     if (userInput) {
       const text = userInput;
@@ -12,7 +17,18 @@ function Hero() {
     }
   };
 
-  const onGenerate = () => {
+  const onGenerate = (input) => {
+    if (!userDetails?.name) {
+      setOpenDialog(true);
+      return;
+    }
+    
+    setMessages(
+      {
+        role: "user",
+        content: input,
+      }
+    );
   }
 
   const suggestions = [
@@ -46,7 +62,7 @@ function Hero() {
           />
           {userInput ? (
             <button
-              onClick={showtextcontent}
+              onClick={() => onGenerate(userInput)} 
               className="px-4 py-2 ml-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
             >
               Get Started
@@ -57,7 +73,7 @@ function Hero() {
         {suggestions.map((suggestion, index) => (
           <div key={index} className="mt-2 text-gray-600 dark:text-gray-400">
             <button
-              onClick={showtextcontent2}
+              onClick={() => onGenerate(suggestion)}
               className="px-4 py-2 text-white bg-gray-300 rounded-md hover:bg-gray-400"
             >
               {suggestion}
@@ -65,6 +81,7 @@ function Hero() {
           </div>
         ))}
       </div>
+      <SIgnInDialog openDialog={openDialog} closeDialog = {(v) => setOpenDialog(v)}/>
     </div>
   );
 }
