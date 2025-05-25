@@ -1,3 +1,4 @@
+// 'use client'
 import React, { useContext } from "react";
 import {
   Dialog,
@@ -10,9 +11,19 @@ import { Button } from "../button";
 import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import uuid4 from "uuid4";
 
-function SIgnInDialog({openDialog,closeDialog}: {openDialog: boolean, closeDialog: () => void}) {
-  const {userDetails, setUserDetails} = useContext(UserDetailContext);
+function SIgnInDialog({
+  openDialog,
+  closeDialog,
+}: {
+  openDialog: boolean;
+  closeDialog: () => void;
+}) {
+  const { userDetails, setUserDetails } = useContext(UserDetailContext);
+  const CreateUser = useMutation(api.users.createUser);
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -26,7 +37,20 @@ function SIgnInDialog({openDialog,closeDialog}: {openDialog: boolean, closeDialo
         }
       );
       console.log("User Info:", userInfo.data);
-      setUserDetails(userInfo.data);
+      const user = userInfo.data;
+      await CreateUser({
+        name: user?.name,
+        email: user?.email,
+        picture: user?.picture,
+        uid: uuid4(),
+      });
+
+      if (typeof window!== "undefined") {
+        localStorage.setItem("user", JSON.stringify(user));
+      }
+
+      setUserDetails(userInfo?.data);
+
       console.log("User Details Set:", userDetails);
     },
     onError: (error) => {
@@ -39,12 +63,9 @@ function SIgnInDialog({openDialog,closeDialog}: {openDialog: boolean, closeDialo
     <Dialog open={openDialog} onOpenChange={closeDialog}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>
-            Sign In
-            
-          </DialogTitle>
+          <DialogTitle>Sign In</DialogTitle>
           <DialogDescription>
-           <Button onClick={googleLogin}>Signin with google</Button>
+            <Button onClick={googleLogin}>Signin with google</Button>
           </DialogDescription>
         </DialogHeader>
       </DialogContent>

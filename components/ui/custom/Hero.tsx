@@ -4,12 +4,18 @@ import React, { useContext, useState } from "react";
 import { MessageContext } from "@/context/MessageContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import SIgnInDialog from "./SIgnInDialog";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useRouter } from "next/navigation";
 
 function Hero() {
   const [userInput, setUserInput] = useState<string>("");
-  const {messages, setMessages} = useContext<any>(MessageContext);
-  const {userDetails, setUserDetails} = useContext(UserDetailContext);
+  const { messages, setMessages } = useContext<any>(MessageContext);
+  const { userDetails, setUserDetails } = useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
+  const CreateWorkspace = useMutation(api.workspace.CreateWorkspace);
+  const router = useRouter();
+
   const showtextcontent = () => {
     if (userInput) {
       const text = userInput;
@@ -17,19 +23,27 @@ function Hero() {
     }
   };
 
-  const onGenerate = (input) => {
+  const onGenerate = async (input) => {
     if (!userDetails?.name) {
       setOpenDialog(true);
       return;
     }
-    
-    setMessages(
-      {
-        role: "user",
-        content: input,
-      }
-    );
-  }
+
+    const msg = {
+      role: "user",
+      content: input,
+    };
+
+    setMessages(msg);
+
+    const workspaceId = await CreateWorkspace({
+      user: userDetails._id,
+      message: [msg],
+    });
+
+    console.log(workspaceId);
+    router.push(`/workspace/${workspaceId}`);
+  };
 
   const suggestions = [
     "Search for a topic",
@@ -62,7 +76,7 @@ function Hero() {
           />
           {userInput ? (
             <button
-              onClick={() => onGenerate(userInput)} 
+              onClick={() => onGenerate(userInput)}
               className="px-4 py-2 ml-2 text-white bg-blue-500 rounded-md hover:bg-blue-600"
             >
               Get Started
@@ -81,7 +95,10 @@ function Hero() {
           </div>
         ))}
       </div>
-      <SIgnInDialog openDialog={openDialog} closeDialog = {(v) => setOpenDialog(v)}/>
+      <SIgnInDialog
+        openDialog={openDialog}
+        closeDialog={(v) => setOpenDialog(v)}
+      />
     </div>
   );
 }
