@@ -6,6 +6,7 @@ import { UserDetailContext } from "@/context/UserDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import Header from "@/components/ui/custom/Header";
 
 function Provider({ children }: { children: React.ReactNode }) {
   const [Messages, setMessages] = useState<any[]>([]);
@@ -25,7 +26,7 @@ function Provider({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    isAuthenticated()
+    isAuthenticated();
   }, []);
 
   return (
@@ -39,6 +40,7 @@ function Provider({ children }: { children: React.ReactNode }) {
               enableSystem
               disableTransitionOnChange
             >
+              <Header />
               {children}
             </NextThemesProvider>
           </MessageContext.Provider>
