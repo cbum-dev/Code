@@ -26,3 +26,21 @@ export const GetWorkspace = query({
         return result
     }
 })
+
+export const GetWorkspaceTop10 = query({
+    args: {},
+    handler: async (ctx) => {
+      const workspaces = await ctx.db.query("workspace").take(10);
+      return Promise.all(
+        workspaces.map(async (workspace) => {
+          const user = await ctx.db.get(workspace.user);
+          return {
+            ...workspace,
+            userName: user?.name, 
+            userEmail: user?.email,
+            userImage: user?.picture
+          };
+        })
+      );
+    },
+  });

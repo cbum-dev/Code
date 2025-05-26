@@ -1,12 +1,13 @@
 import React, { useContext } from "react";
 import { Button } from "../button";
 import { UserDetailContext } from "@/context/UserDetailContext";
+import { Avatar, AvatarFallback, AvatarImage } from "../avatar";
 
 function Header() {
-  const { userDetails, setUserDetails } = useContext(UserDetailContext);
-  
+  const { userDetails } = useContext(UserDetailContext);
+
   return (
-    <div className="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-900 shadow-md">
+    <div className="flex items-center border-b justify-between px-4 py-3  shadow-md">
       <h1 className="text-xl font-bold text-gray-900 dark:text-white">
         Bolt.new
       </h1>
@@ -26,6 +27,21 @@ function Header() {
           </Button>
         </div>
       )}
+      <Avatar>
+        {userDetails ? (
+          <>
+            <AvatarImage
+              src={userDetails.picture || "/default-avatar.png"}
+              alt={userDetails.name || "User Avatar"}
+            />
+            <AvatarFallback className="text-xs">
+              {userDetails.name ? userDetails.name[0].toUpperCase() : "U"}
+            </AvatarFallback>
+          </>
+        ) : (
+          <AvatarFallback className="text-xs">U</AvatarFallback>
+        )}
+      </Avatar>
     </div>
   );
 }

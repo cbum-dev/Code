@@ -1,6 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { ThemeProvider as NextThemesProvider } from "next-themes";
 import { MessageContext } from "@/context/MessageContext";
 import { UserDetailContext } from "@/context/UserDetailContext";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -8,9 +7,24 @@ import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Header from "@/components/ui/custom/Header";
 
+interface Message {
+  id: string;
+  content: string;
+  timestamp: Date;
+  senderId: string;
+}
+
+interface UserDetails {
+  _id: string;
+  name: string;
+  email: string;
+  picture: string;
+  uid: string;
+}
+
 function Provider({ children }: { children: React.ReactNode }) {
-  const [Messages, setMessages] = useState<any[]>([]);
-  const [userDetails, setUserDetails] = useState<any>(null);
+  const [Messages, setMessages] = useState<Message[]>([]);
+  const [userDetails, setUserDetails] = useState<UserDetails>();
   const convex = useConvex();
 
   const isAuthenticated = async () => {
@@ -31,18 +45,11 @@ function Provider({ children }: { children: React.ReactNode }) {
 
   return (
     <div suppressHydrationWarning>
-      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID}>
+      <GoogleOAuthProvider clientId={process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID ?? ''}>
         <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>
           <MessageContext.Provider value={{ Messages, setMessages }}>
-            <NextThemesProvider
-              attribute="class"
-              defaultTheme="dark"
-              enableSystem
-              disableTransitionOnChange
-            >
               <Header />
               {children}
-            </NextThemesProvider>
           </MessageContext.Provider>
         </UserDetailContext.Provider>
       </GoogleOAuthProvider>
