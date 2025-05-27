@@ -6,6 +6,8 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import Header from "@/components/ui/custom/Header";
+import Footer from "@/components/ui/custom/Footer";
+import { ModeToggle } from "@/components/ui/custom/DarkMode";
 
 interface Message {
   id: string;
@@ -50,6 +52,9 @@ function Provider({ children }: { children: React.ReactNode }) {
           <MessageContext.Provider value={{ Messages, setMessages }}>
               <Header />
               {children}
+              <Footer/>
+              <ModeToggle />
+
           </MessageContext.Provider>
         </UserDetailContext.Provider>
       </GoogleOAuthProvider>

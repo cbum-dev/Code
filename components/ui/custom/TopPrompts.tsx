@@ -1,14 +1,15 @@
 "use client";
 import React, { useState, useEffect } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import { TrendingUp, Zap, Code2, Star } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { Badge } from "@/components/ui/badge";
 
-const getUserInitials = (name: string) => {
+const getUserInitials = (name) => {
   if (!name) return "U";
   return name
     .split(" ")
@@ -18,51 +19,47 @@ const getUserInitials = (name: string) => {
     .slice(0, 2);
 };
 
-const PromptCard = ({ workspace, onTryPrompt }) => {
+const PromptListItem = ({ workspace, index, onCopy }) => {
   const content =
     workspace.message?.[0]?.content ||
     workspace.message ||
     "No content available";
 
   return (
-    <Card className="group hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer">
-      <CardHeader className="pb-3">
-        <div className="flex items-start gap-3">
-          <div className="text-2xl">⚡</div>
-          <div className="flex-1">
-            <CardTitle className="text-lg group-hover:text-blue-600 transition-colors line-clamp-2">
-              {content.slice(0, 80)}...
-            </CardTitle>
+    <div className="group hover:bg-gray-800 transition-colors duration-200 rounded-lg p-4">
+      <div className="flex items-start gap-4">
+        <div className="flex-shrink-0 my-auto w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium text-gray-300">
+          {index + 1}
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-gray-100 line-clamp-2 mb-2 group-hover:text-blue-400 transition-colors">
+                {content.slice(0, 120)}...
+              </p>
+              <div className="flex items-center gap-2 text-xs text-gray-400">
+                <Avatar className="w-4 h-4">
+                  <AvatarImage src={workspace.userImage} alt={workspace.userName} />
+                  <AvatarFallback className="text-xs">
+                    {getUserInitials(workspace.userName)}
+                  </AvatarFallback>
+                </Avatar>
+                <span>{workspace.userName || "Anonymous"}</span>
+              </div>
+            </div>
+            <Button
+              onClick={() => onCopy(content)}
+              size="sm"
+              variant="outline"
+              className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+            >
+              <Zap className="w-3 h-3 mr-1" />
+              Copy
+            </Button>
           </div>
         </div>
-      </CardHeader>
-
-      <CardContent className="pt-0">
-
-        <div className="flex items-center gap-2 mb-4 p-2 bg-gray-50 rounded-lg">
-          <Avatar className="w-6 h-6">
-            <AvatarImage src={workspace.userImage} alt={workspace.userName} />
-            <AvatarFallback className="text-xs">
-              {getUserInitials(workspace.userName)}
-            </AvatarFallback>
-          </Avatar>
-          <span className="text-xs text-gray-600">
-            <span className="font-medium">
-              {workspace.userName || "Anonymous"}
-            </span>
-          </span>
-        </div>
-
-        <Button
-          onClick={() => onTryPrompt(content)}
-          className="w-full group-hover:bg-blue-600 transition-colors"
-          size="sm"
-        >
-          <Zap className="w-4 h-4 mr-2" />
-          Try This Prompt
-        </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
@@ -70,6 +67,7 @@ function TopPrompts() {
   const [workspaceData, setWorkspaceData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("trending");
+  const [copiedPrompt, setCopiedPrompt] = useState(null);
   const convex = useConvex();
 
   const getWorkspaceData = async () => {
@@ -89,37 +87,36 @@ function TopPrompts() {
     getWorkspaceData();
   }, []);
 
-  const handleTryPrompt = (prompt: string) => {
-    console.log("Trying prompt:", prompt);
+  const handleCopyPrompt = (prompt) => {
+    navigator.clipboard.writeText(prompt);
+    setCopiedPrompt(prompt);
+    setTimeout(() => setCopiedPrompt(null), 2000);
   };
 
   const categorizedData = {
-    trending: workspaceData.slice(0, 4),
-    popular:
-      workspaceData.slice(2, 6).length > 0
-        ? workspaceData.slice(2, 6)
-        : workspaceData.slice(0, 4),
-    recent: workspaceData.slice(-4).reverse(),
+    trending: workspaceData.slice(0, 6),
+    popular: workspaceData.slice(2, 8).length > 0 ? workspaceData.slice(2, 8) : workspaceData.slice(0, 6),
+    recent: workspaceData.slice(-6).reverse(),
   };
 
   if (loading) {
     return (
-      <section className="w-full max-w-7xl mx-auto px-4 py-12">
-        <div className="text-center mb-10">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Top Prompts</h2>
-          <p className="text-lg text-gray-600">Loading popular prompts...</p>
+      <section className="w-full max-w-4xl mx-auto px-4 py-8">
+        <div className="text-center mb-8">
+          <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
+          <p className="text-gray-400">Loading popular prompts...</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
-            <Card key={i} className="animate-pulse">
-              <CardHeader>
-                <div className="h-6 bg-gray-200 rounded mb-2"></div>
-              </CardHeader>
-              <CardContent>
-                <div className="h-4 bg-gray-200 rounded mb-4"></div>
-                <div className="h-10 bg-gray-200 rounded"></div>
-              </CardContent>
-            </Card>
+            <div key={i} className="animate-pulse p-4 border rounded-lg border-gray-700">
+              <div className="flex items-start gap-4">
+                <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
+                <div className="flex-1">
+                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-700 rounded w-1/3"></div>
+                </div>
+              </div>
+            </div>
           ))}
         </div>
       </section>
@@ -128,29 +125,31 @@ function TopPrompts() {
 
   if (workspaceData.length === 0) {
     return (
-      <section className="w-full max-w-7xl mx-auto px-4 py-12">
+      <section className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="text-center">
-          <h2 className="text-3xl font-bold text-gray-900 mb-2">Top Prompts</h2>
-          <p className="text-lg text-gray-600">
-            No prompts available yet. Be the first to create something!
-          </p>
+          <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
+          <p className="text-gray-400">No prompts available yet. Be the first to create something!</p>
         </div>
       </section>
     );
   }
 
   return (
-    <section className="w-full max-w-7xl mx-auto px-4 py-12">
-      <div className="text-center mb-10">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Top Prompts</h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+    <section className="w-full max-w-4xl mx-auto px-4 py-8">
+
+      <div className="text-center mb-8">
+      <Badge variant="outline" className="mb-4 mx-auto">
+            Pricing Plans
+          </Badge>
+        <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
+        <p className="text-gray-400 max-w-2xl mx-auto">
           Discover popular project ideas from our community
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <div className="flex justify-center mb-8">
-          <TabsList className="grid w-full max-w-md grid-cols-3">
+        <div className="flex justify-center mb-6">
+          <TabsList className="grid w-full max-w-md grid-cols-3 bg-gray-800 border border-gray-700">
             <TabsTrigger value="trending">
               <TrendingUp className="w-4 h-4 mr-1" />
               Trending
@@ -166,28 +165,32 @@ function TopPrompts() {
           </TabsList>
         </div>
 
-        {["trending", "popular", "recent"].map((tab) => (
+        {['trending', 'popular', 'recent'].map((tab) => (
           <TabsContent key={tab} value={tab}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {categorizedData[tab].map((workspace) => (
-                <PromptCard
-                  key={workspace._id}
-                  workspace={workspace}
-                  onTryPrompt={handleTryPrompt}
-                />
+            <div className="border rounded-lg divide-y divide-gray-700 border-gray-700">
+              {categorizedData[tab].map((workspace, index) => (
+                <React.Fragment key={workspace._id}>
+                  <PromptListItem
+                    workspace={workspace}
+                    index={index}
+                    onCopy={handleCopyPrompt}
+                  />
+                  <Separator className="bg-gray-700" />
+                </React.Fragment>
               ))}
             </div>
           </TabsContent>
         ))}
       </Tabs>
 
-      <div className="text-center mt-10">
-        <Button variant="outline" size="lg">
-          View All Prompts
-        </Button>
-      </div>
+      {copiedPrompt && (
+        <div className="fixed bottom-4 right-14 bg-gray-900 text-gray-100 px-4 py-2 rounded-lg shadow-lg">
+          Copied!
+        </div>
+      )}
     </section>
   );
 }
 
 export default TopPrompts;
+ 

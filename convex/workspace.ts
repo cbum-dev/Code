@@ -10,7 +10,8 @@ export const CreateWorkspace = mutation({
     handler:async(ctx,args)=> {
         const result = await ctx.db.insert('workspace',{
             message:args.message,
-            user:args.user
+            user:args.user,
+            fileData:{}
         })
         return result;
     }
@@ -44,3 +45,29 @@ export const GetWorkspaceTop10 = query({
       );
     },
   });
+
+export const UpdateMessages = mutation({
+  args:{
+    workspaceId : v.id('workspace'),
+    message: v.any()
+  },
+  handler:async(ctx,args) => {
+    const result = await ctx.db.patch(args.workspaceId , {
+      message : args.message
+    })
+    return result;
+  }
+})
+
+export const UpdateFiles = mutation({
+  args:{
+    workspaceId : v.id('workspace'),
+    files: v.optional(v.any())
+  },
+  handler:async(ctx,args) => {
+    const result = await ctx.db.patch(args.workspaceId , {
+      fileData : args.files
+    })
+    return result;
+  }
+})

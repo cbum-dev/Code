@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useContext } from "react";
 import {
   SandpackProvider,
   SandpackLayout,
@@ -7,39 +7,142 @@ import {
   SandpackPreview,
   SandpackFileExplorer,
 } from "@codesandbox/sandpack-react";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
+import { RefreshCw, Code, Eye } from "lucide-react";
+import axios from "axios";
+import { MessageContext } from "@/context/MessageContext";
+import file from "@/lib/file";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { useParams } from "next/navigation";
 
 function CodeView() {
+  const {id} = useParams()
   const [activeTab, setActiveTab] = React.useState("code");
+  const [files, setFiles] = React.useState(file.default_file);
+  const {Messages, setMessages} = useContext(MessageContext);
+  const [isLoading, setIsLoading] = React.useState(false);
+  const UpdateFiles = useMutation(api.workspace.UpdateFiles)
 
+
+  useEffect(() => {
+    if (Messages.length > 0) {
+      const lastMessage = Messages[Messages.length - 1];
+      if (lastMessage.role === "user" && !isLoading) {
+        getAi();
+      }
+    }
+  }, [Messages]);
+  const getAi = async () => {
+    if (isLoading || Messages.length === 0) return;
+    
+    setIsLoading(true);
+    try {
+      const lastUserMessage = Messages[Messages.length - 1];
+      
+      const result = await axios.post("/api/get-code", { 
+        prompt: lastUserMessage.content 
+      });
+      
+      const aiMessage = {
+        role: "assistant",
+        content: result.data.result,
+      };
+      const jsonStart = aiMessage.content.indexOf('{');
+      const jsonEnd = aiMessage.content.lastIndexOf('}');
+      const jsonString = aiMessage.content.slice(jsonStart, jsonEnd + 1);
+      const jsonResponse = JSON.parse(jsonString);
+      const mergedFiles = {
+        ...files,
+        ...jsonResponse.files,
+      };
+      console.log("Merged Files:", jsonResponse,"---------------", aiMessage.content.files);
+      setFiles(mergedFiles);
+      await UpdateFiles({
+        workspaceId: id,
+        files: jsonResponse.files,
+      });
+      
+    } catch (error) {
+      console.error("Error getting AI response:", error);
+      
+      const errorMessage = {
+        role: "assistant",
+        content: "Sorry, I encountered an error. Please try again.",
+      };
+      
+      setMessages((prev) => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
+  };
   return (
-    <div>
-      <div>
-        <div>
-          <h2
-            onClick={() => setActiveTab("code")}
-            className={`text-sm ${activeTab == "code" && "text-blue-700"}`}
-          >
-            Code
-          </h2>
-          <h2
-            onClick={() => setActiveTab("preview")}
-            className={`text-sm ${activeTab == "preview" && "text-blue-700"}`}
-          >
-            Preview
-          </h2>
-        </div>
-      </div>{" "}
-      <SandpackProvider template="react" theme={"dark"}>
-        <SandpackLayout>
+    <div className="w-3/5 p-2 border rounded-lg overflow-hidden mt-auto h-[calc(100vh-64px)]">
+      <div className="flex items-center justify-between p-2 bg-gray-100 dark:bg-gray-800 border-b">
+        <Tabs 
+          value={activeTab} 
+          onValueChange={setActiveTab}
+          className="w-auto"
+        >
+          <TabsList>
+            <TabsTrigger value="code" className="flex items-center gap-2">
+              <Code className="h-4 w-4" />
+              Code
+            </TabsTrigger>
+            <TabsTrigger value="preview" className="flex items-center gap-2">
+              <Eye className="h-4 w-4" />
+              Preview
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          onClick={() => window.location.reload()}
+          className="flex items-center gap-1"
+        >
+          <RefreshCw className="h-4 w-4" />
+          <span className="hidden md:inline">Refresh</span>
+        </Button>
+      </div>
+
+      <SandpackProvider 
+      files={files}
+        template="react" 
+        theme="dark"
+        options={{
+          externalResources: ["https://cdn.tailwindcss.com"],
+        }}
+      >
+        <SandpackLayout className="rounded-b-lg">
           {activeTab === "code" ? (
             <>
-              <SandpackFileExplorer style={{ height: "80vh" }} />
-              <SandpackCodeEditor style={{ height: "80vh" }} />
+              <SandpackFileExplorer 
+                style={{ 
+                  height: "calc(100vh - 140px)",
+                  flex: "0 0 200px"
+                }} 
+              />
+              <SandpackCodeEditor 
+                style={{ 
+                  height: "calc(100vh - 140px)",
+                  flex: 1
+                }} 
+                showLineNumbers
+                showInlineErrors
+                wrapContent
+              />
             </>
           ) : (
-            <>
-              <SandpackPreview showNavigator={true} style={{ height: "80vh" }} />
-            </>
+            <SandpackPreview 
+              showNavigator 
+              style={{ 
+                height: "calc(100vh - 140px)",
+                flex: 1
+              }} 
+            />
           )}
         </SandpackLayout>
       </SandpackProvider>

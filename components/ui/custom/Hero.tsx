@@ -9,7 +9,7 @@ import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { useConvex } from "convex/react";
 import { Badge } from "../badge";
-import { BackgroundBeams } from "../background-beams";
+import { BackgroundBeams,Highlight } from "../background-beams";
 function Hero() {
   const [userInput, setUserInput] = useState<string>("");
   const { messages, setMessages } = useContext<any>(MessageContext);
@@ -72,8 +72,12 @@ function Hero() {
     <div className="">
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-4xl relative z-10 font-bold text-gray-900 dark:text-white">
-          Welcome to Bolt.new
+          Welcome to {" "}
+          <Highlight className="text-black dark:text-white">
+          Bolt.new
+        </Highlight>
         </h1>
+
         <p className="mb-4 relative z-10 mt-2 text-md text-gray-600 dark:text-gray-400">
           Your one-stop solution for all your needs.
         </p>
