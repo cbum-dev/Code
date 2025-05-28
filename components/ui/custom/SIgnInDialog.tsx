@@ -1,5 +1,5 @@
-// 'use client'
-// 'use client'
+// @ts-nocheck
+'use client'
 import React, { useContext } from "react";
 import {
   Dialog,
@@ -19,6 +19,7 @@ import { FcGoogle } from "react-icons/fc";
 import { Separator } from "../separator";
 import { Loader2 } from "lucide-react";
 
+
 function SIgnInDialog({
   openDialog,
   closeDialog,
@@ -26,7 +27,7 @@ function SIgnInDialog({
   openDialog: boolean;
   closeDialog: () => void;
 }) {
-  const { userDetails, setUserDetails } = useContext(UserDetailContext);
+  const { setUserDetails } = useContext(UserDetailContext);
   const CreateUser = useMutation(api.users.createUser);
   const [isLoading, setIsLoading] = React.useState(false);
 

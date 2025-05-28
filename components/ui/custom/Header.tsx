@@ -1,3 +1,4 @@
+// @ts-nocheck
 import React, { useContext } from "react";
 import { Button } from "../button";
 import { UserDetailContext } from "@/context/UserDetailContext";

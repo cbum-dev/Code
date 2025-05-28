@@ -1,30 +1,28 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
 import { 
   TrendingUp, 
   TrendingDown,
-  Users, 
   Zap, 
-  Code2, 
-  MessageSquare,
-  Calendar,
-  ChevronLeft,
-  ChevronRight,
-  Plus,
-  Minus,
   Target,
   Activity,
   Clock,
   Globe
 } from "lucide-react";
 
-const MetricCard = ({ title, value, change, changeLabel, trend, chart, color = "red" }) => {
+interface MetricCardProps {
+  title: string;
+  value: string;
+  change?: string;
+  changeLabel?: string;
+  trend?: 'up' | 'down';
+  chart?: number[];
+  color?: 'red' | 'blue' | 'green' | 'purple';
+}
+
+const MetricCard = ({ title, value, change, changeLabel, trend, chart, color = "red" }: MetricCardProps) => {
   const isPositive = trend === "up";
   const TrendIcon = isPositive ? TrendingUp : TrendingDown;
   
@@ -95,7 +93,7 @@ function MetricsDashboard() {
             Real-time Metrics Dashboard
           </h2>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Track your platform's performance, user engagement, and growth metrics in real-time.
+            Track your platform&apos;s performance, user engagement, and growth metrics in real-time.
           </p>
         </div>
 

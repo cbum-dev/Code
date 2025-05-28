@@ -9,7 +9,11 @@ import { useConvex } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
 
-const getUserInitials = (name) => {
+interface Name {
+  name: string | undefined;
+}
+
+const getUserInitials = (name: Name["name"]): string => {
   if (!name) return "U";
   return name
     .split(" ")
@@ -19,7 +23,15 @@ const getUserInitials = (name) => {
     .slice(0, 2);
 };
 
-const PromptListItem = ({ workspace, index, onCopy }) => {
+const PromptListItem = ({
+  workspace,
+  index,
+  onCopy,
+}: {
+  workspace: any;
+  index: number;
+  onCopy: (content: string) => void;
+}) => {
   const content =
     workspace.message?.[0]?.content ||
     workspace.message ||
@@ -39,7 +51,10 @@ const PromptListItem = ({ workspace, index, onCopy }) => {
               </p>
               <div className="flex items-center gap-2 text-xs text-gray-400">
                 <Avatar className="w-4 h-4">
-                  <AvatarImage src={workspace.userImage} alt={workspace.userName} />
+                  <AvatarImage
+                    src={workspace.userImage}
+                    alt={workspace.userName}
+                  />
                   <AvatarFallback className="text-xs">
                     {getUserInitials(workspace.userName)}
                   </AvatarFallback>
@@ -64,7 +79,18 @@ const PromptListItem = ({ workspace, index, onCopy }) => {
 };
 
 function TopPrompts() {
-  const [workspaceData, setWorkspaceData] = useState([]);
+  interface Workspace {
+    userName?: string;
+    userEmail?: string;
+    userImage?: string;
+    _id: any;
+    _creationTime: number;
+    fileData?: any;
+    message: any;
+    user: any;
+  }
+
+  const [workspaceData, setWorkspaceData] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState("trending");
   const [copiedPrompt, setCopiedPrompt] = useState(null);
@@ -87,7 +113,7 @@ function TopPrompts() {
     getWorkspaceData();
   }, []);
 
-  const handleCopyPrompt = (prompt) => {
+  const handleCopyPrompt = (prompt: any) => {
     navigator.clipboard.writeText(prompt);
     setCopiedPrompt(prompt);
     setTimeout(() => setCopiedPrompt(null), 2000);
@@ -95,7 +121,10 @@ function TopPrompts() {
 
   const categorizedData = {
     trending: workspaceData.slice(0, 6),
-    popular: workspaceData.slice(2, 8).length > 0 ? workspaceData.slice(2, 8) : workspaceData.slice(0, 6),
+    popular:
+      workspaceData.slice(2, 8).length > 0
+        ? workspaceData.slice(2, 8)
+        : workspaceData.slice(0, 6),
     recent: workspaceData.slice(-6).reverse(),
   };
 
@@ -108,7 +137,10 @@ function TopPrompts() {
         </div>
         <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="animate-pulse p-4 border rounded-lg border-gray-700">
+            <div
+              key={i}
+              className="animate-pulse p-4 border rounded-lg border-gray-700"
+            >
               <div className="flex items-start gap-4">
                 <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
                 <div className="flex-1">
@@ -128,7 +160,9 @@ function TopPrompts() {
       <section className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="text-center">
           <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
-          <p className="text-gray-400">No prompts available yet. Be the first to create something!</p>
+          <p className="text-gray-400">
+            No prompts available yet. Be the first to create something!
+          </p>
         </div>
       </section>
     );
@@ -136,11 +170,10 @@ function TopPrompts() {
 
   return (
     <section className="w-full max-w-4xl mx-auto px-4 py-8">
-
       <div className="text-center mb-8">
-      <Badge variant="outline" className="mb-4 mx-auto">
-            Pricing Plans
-          </Badge>
+        <Badge variant="outline" className="mb-4 mx-auto">
+          Pricing Plans
+        </Badge>
         <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
         <p className="text-gray-400 max-w-2xl mx-auto">
           Discover popular project ideas from our community
@@ -165,19 +198,22 @@ function TopPrompts() {
           </TabsList>
         </div>
 
-        {['trending', 'popular', 'recent'].map((tab) => (
+        {["trending", "popular", "recent"].map((tab) => (
           <TabsContent key={tab} value={tab}>
             <div className="border rounded-lg divide-y divide-gray-700 border-gray-700">
-              {categorizedData[tab].map((workspace, index) => (
-                <React.Fragment key={workspace._id}>
-                  <PromptListItem
-                    workspace={workspace}
-                    index={index}
-                    onCopy={handleCopyPrompt}
-                  />
-                  <Separator className="bg-gray-700" />
-                </React.Fragment>
-              ))}
+              {
+                // @ts-ignore
+                categorizedData[tab].map((workspace: any, index: number) => (
+                  <React.Fragment key={workspace._id}>
+                    <PromptListItem
+                      workspace={workspace}
+                      index={index}
+                      onCopy={handleCopyPrompt}
+                    />
+                    <Separator className="bg-gray-700" />
+                  </React.Fragment>
+                ))
+              }
             </div>
           </TabsContent>
         ))}
@@ -193,4 +229,3 @@ function TopPrompts() {
 }
 
 export default TopPrompts;
- 

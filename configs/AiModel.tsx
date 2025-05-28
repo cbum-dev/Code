@@ -1,38 +1,42 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-let chatHistory = []; 
+// Define types for chat history
+type ChatMessage = {
+  role: "user" | "model";
+  parts: { text: string }[];
+};
 
+// Initialize chatHistory with proper typing
+const chatHistory: ChatMessage[] = [];
 
-
-async function main(prompt: string) {
+async function main(prompt: string): Promise<string> {
   try {
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) throw new Error("Gemini API key is not defined");
     
     const genAI = new GoogleGenerativeAI(apiKey);
     
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" }); // Use a model suitable for chat
+    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const chat = model.startChat({
-      history: chatHistory, 
+      history: chatHistory,
       generationConfig: {
         maxOutputTokens: 500,
       },
     });
 
-    
-
     const result = await chat.sendMessage(prompt);
     const response = await result.response;
     const text = response.text();
 
+    // Update chat history
     chatHistory.push({
       role: "user",
       parts: [{ text: prompt }],
     });
     chatHistory.push({
       role: "model",
-      parts: [{ text: text }],
+      parts: [{ text }], // shorthand when property matches variable name
     });
     
     return text;
@@ -44,8 +48,7 @@ async function main(prompt: string) {
 
 export default main;
 
-
-export async function codeSnippet(prompt: string) {
+export async function codeSnippet(prompt: string): Promise<string> {
   try {
     const apiKey = process.env.NEXT_PUBLIC_GEMINI_API_KEY;
     if (!apiKey) throw new Error("Gemini API key is not defined");
@@ -55,7 +58,7 @@ export async function codeSnippet(prompt: string) {
     const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
     const chat = model.startChat({
-      history: chatHistory, 
+      history: chatHistory,
       generationConfig: {
         maxOutputTokens: 8129,
         responseMimeType: "application/json"
@@ -72,7 +75,7 @@ export async function codeSnippet(prompt: string) {
     });
     chatHistory.push({
       role: "model",
-      parts: [{ text: text }],
+      parts: [{ text }],
     });
     
     return text;

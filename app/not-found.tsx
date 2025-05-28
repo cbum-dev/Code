@@ -56,7 +56,7 @@ const NotFoundPage = () => {
               <span className="text-gray-500">✗</span> Error: Route not found
             </div>
             <div className="text-yellow-400 text-sm">
-              → The page you're looking for doesn't exist
+              → The page you&apos;re looking for doesn&apos;t exist
             </div>
           </div>
 
@@ -67,7 +67,7 @@ const NotFoundPage = () => {
             </div>
             <h2 className="text-xl text-gray-300 mb-2">Page Not Found</h2>
             <p className="text-gray-500 text-sm">
-              This route hasn't been implemented yet.
+              This route hasn&apos;t been implemented yet.
             </p>
           </div>
 

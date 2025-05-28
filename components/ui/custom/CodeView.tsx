@@ -1,3 +1,4 @@
+
 "use client";
 import React, { useEffect, useContext } from "react";
 import {
@@ -18,7 +19,7 @@ import { api } from "@/convex/_generated/api";
 import { useParams } from "next/navigation";
 
 function CodeView() {
-  const {id} = useParams()
+  const {id} = useParams() as { id: string }
   const [activeTab, setActiveTab] = React.useState("code");
   const [files, setFiles] = React.useState(file.default_file);
   const {Messages, setMessages} = useContext(MessageContext);
@@ -60,6 +61,7 @@ function CodeView() {
       console.log("Merged Files:", jsonResponse,"---------------", aiMessage.content.files);
       setFiles(mergedFiles);
       await UpdateFiles({
+        // @ts-expect-error - workspaceId type mismatch between string and _Id
         workspaceId: id,
         files: jsonResponse.files,
       });

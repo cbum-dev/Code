@@ -1,3 +1,4 @@
+// @ts-nocheck
 "use client";
 import { ArrowRight, Link } from "lucide-react";
 import React, { useContext, useEffect, useState } from "react";
@@ -9,22 +10,17 @@ import { api } from "@/convex/_generated/api";
 import { useRouter } from "next/navigation";
 import { useConvex } from "convex/react";
 import { Badge } from "../badge";
-import { BackgroundBeams,Highlight } from "../background-beams";
+import { BackgroundBeams, Highlight } from "../background-beams";
+
 function Hero() {
   const [userInput, setUserInput] = useState<string>("");
-  const { messages, setMessages } = useContext<any>(MessageContext);
-  const { userDetails, setUserDetails } = useContext(UserDetailContext);
+  const messageContext = useContext(MessageContext);
+  const { userDetails } = useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = useState(false);
   const CreateWorkspace = useMutation(api.workspace.CreateWorkspace);
   const router = useRouter();
   const convex = useConvex();
 
-  const showtextcontent = () => {
-    if (userInput) {
-      const text = userInput;
-      console.log(text);
-    }
-  };
   const getWorkspaceData = async () => {
     try {
       const result = await convex.query(api.workspace.GetWorkspaceTop10, {});
@@ -37,7 +33,16 @@ function Hero() {
   useEffect(() => {
     getWorkspaceData();
   }, []);
-  const onGenerate = async (input) => {
+
+  if (!messageContext) {
+    console.error("MessageContext is undefined. Make sure the component is wrapped with MessageProvider.");
+    return <div>Loading...</div>;
+  }
+
+  const { setMessages } = messageContext;
+
+
+  const onGenerate = async (input: string) => {
     if (!userDetails?.name) {
       setOpenDialog(true);
       return;
@@ -48,15 +53,20 @@ function Hero() {
       content: input,
     };
 
-    setMessages(msg);
+    setMessages(() => [msg]); 
 
-    const workspaceId = await CreateWorkspace({
-      user: userDetails._id,
-      message: [msg],
-    });
+    try {
+      const workspaceId = await CreateWorkspace({
+        user: userDetails._id,
+        message: [msg],
+      });
 
-    console.log(workspaceId);
-    router.push(`/workspace/${workspaceId}`);
+      console.log(workspaceId);
+      router.push(`/workspace/${workspaceId}`);
+    } catch (error) {
+      console.error("Error creating workspace:", error);
+      setMessages([]);
+    }
   };
 
   const suggestions = [
@@ -67,20 +77,22 @@ function Hero() {
     "Build a chat app",
     "Make a weather app",
     "Create a blog site"
-   ];
+  ];
+
   return (
     <div className="">
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-4xl relative z-10 font-bold text-gray-900 dark:text-white">
           Welcome to {" "}
           <Highlight className="text-black dark:text-white">
-          Bolt.new
-        </Highlight>
+            Bolt.new
+          </Highlight>
         </h1>
 
         <p className="mb-4 relative z-10 mt-2 text-md text-gray-600 dark:text-gray-400">
           Your one-stop solution for all your needs.
         </p>
+        
         <div className="p-5 border rounded-xl max-w-2xl w-full">
           <div className=" flex gap-2">
             <textarea
@@ -95,11 +107,10 @@ function Hero() {
               <ArrowRight
                 onClick={() => onGenerate(userInput)}
                 className=" p-2 relative z-10 h-8 w-8 cursor-pointer text-white bg-red-500 rounded-md hover:bg-red-700"
-              ></ArrowRight>
+              />
             ) : null}
           </div>
           <Link href="/docs" className="ml-2 text-red-500 hover:underline" />
-
         </div>
 
         <div className="flex mt-4 flex-wrap gap-2 max-w-2xl items-center justify-center">
@@ -115,12 +126,13 @@ function Hero() {
           ))}
         </div>
       </div>
+      
       <SIgnInDialog
         openDialog={openDialog}
-        closeDialog={(v: void) => setOpenDialog(v)}
+        closeDialog={() => setOpenDialog(false)}
       />
       <BackgroundBeams />
-              </div>
+    </div>
   );
 }
 

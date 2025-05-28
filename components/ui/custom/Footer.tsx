@@ -1,9 +1,9 @@
 "use client";
 import React from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
+import { Button } from "../button";
+import { Input } from "../input";
+import { Separator } from "../separator";
+import { Badge } from "../badge";
 import { 
   Github, 
   Twitter, 
@@ -27,7 +27,7 @@ import {
   Smartphone
 } from "lucide-react";
 
-const FooterSection = ({ title, children }) => (
+const FooterSection = ({ title, children }:{title:string,children:React.ReactNode}) => (
   <div className="space-y-4">
     <h3 className="text-lg font-semibold text-foreground">{title}</h3>
     <div className="space-y-3">
@@ -36,7 +36,7 @@ const FooterSection = ({ title, children }) => (
   </div>
 );
 
-const FooterLink = ({ href, icon: Icon, children, external = false }) => (
+const FooterLink = ({ href, icon: Icon, children, external = false }: { href: string; icon?: any; children: React.ReactNode; external?: boolean }) => (
   <a 
     href={href} 
     className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors duration-200 text-sm group"
@@ -49,7 +49,7 @@ const FooterLink = ({ href, icon: Icon, children, external = false }) => (
   </a>
 );
 
-const SocialLink = ({ href, icon: Icon, label }) => (
+const SocialLink = ({ href, icon: Icon, label }:{href:string,icon?: any;label:string}) => (
   <Button 
     variant="ghost" 
     size="sm" 
@@ -67,7 +67,6 @@ function Footer() {
 
   return (
     <footer className="border-t bg-background">
-      {/* Newsletter Section */}
       <div className="border-b">
         <div className="max-w-7xl mx-auto px-4 py-12">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
@@ -209,7 +208,6 @@ function Footer() {
         </div>
       </div>
 
-      {/* Status Indicator */}
       <div className="border-t bg-muted/30">
         <div className="max-w-7xl mx-auto px-4 py-3">
           <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground">

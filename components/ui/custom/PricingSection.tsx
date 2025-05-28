@@ -8,18 +8,22 @@ import {
   Check, 
   Star, 
   Zap, 
-  Crown, 
-  Users, 
-  Shield, 
-  Infinity,
-  Code2,
-  Rocket,
-  MessageSquare,
-  Database,
+  Crown,
   Headphones
 } from "lucide-react";
 
-const PricingCard = ({ tier, isPopular = false }) => {
+interface PricingTier {
+  name: string;
+  price: number;
+  period: string;
+  description: string;
+  buttonText: string;
+  features: string[];
+  limitations?: string[];
+  originalPrice?: number;
+}
+
+const PricingCard = ({ tier, isPopular = false }:{tier: PricingTier, isPopular: boolean}) => {
   const getIcon = (planName: string) => {
     switch (planName.toLowerCase()) {
       case 'free':
@@ -266,7 +270,7 @@ function PricingSection() {
                 </h4>
                 <p className="text-sm text-muted-foreground">
                   Yes, you can change your plan at any time. Changes take effect immediately 
-                  and we'll prorate any charges.
+                  and we&apos;ll prorate any charges.
                 </p>
               </div>
               
