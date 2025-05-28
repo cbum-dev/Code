@@ -118,7 +118,7 @@ function Hero() {
             <div key={index} className="mt-2 text-gray-600 dark:text-gray-400">
               <Badge
                 onClick={() => setUserInput(suggestion)}
-                className="px-4 relative z-10 cursor-pointer py-2 text-white bg-transparent border border-neutral-800  rounded-xl hover:bg-neutral-900 dark:hover:bg-neutral-900"
+                className="px-4 relative z-10 cursor-pointer py-2 dark:text-white text-neutral-700 bg-transparent border dark:border-neutral-800  rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-900"
               >
                 {suggestion}
               </Badge>

@@ -10,10 +10,14 @@ import {
   DropdownMenuTrigger,
 } from "../dropdown-menu";
 import { LogOut, User, Settings } from "lucide-react";
+import SIgnInDialog from "./SIgnInDialog";
 
 function Header() {
   const { userDetails, setUserDetails } = useContext(UserDetailContext);
-
+  const [openDialog, setOpenDialog] = React.useState(false);
+  const handleLogin = () => {
+    setOpenDialog(true);
+  };
   const handleLogout = () => {
     setUserDetails(null);
   };
@@ -28,16 +32,11 @@ function Header() {
         {!userDetails ? (
           <div className="flex items-center space-x-4">
             <Button
+              onClick={handleLogin}
               variant="secondary"
-              className="text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
+              className="text-gray-900 dark:text-white bg-red-500 hover:bg-gray-200 dark:hover:bg-gray-800"
             >
               Login
-            </Button>
-            <Button
-              variant="secondary"
-              className="text-gray-900 dark:text-white hover:bg-gray-200 dark:hover:bg-gray-800"
-            >
-              Sign Up
             </Button>
           </div>
         ) : (
@@ -80,6 +79,10 @@ function Header() {
           </DropdownMenu>
         )}
       </div>
+      <SIgnInDialog
+        openDialog={openDialog}
+        closeDialog={() => setOpenDialog(false)}
+      />
     </div>
   );
 }

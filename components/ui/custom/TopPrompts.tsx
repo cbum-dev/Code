@@ -1,4 +1,4 @@
-"use client";
+'use client';
 import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -38,18 +38,18 @@ const PromptListItem = ({
     "No content available";
 
   return (
-    <div className="group hover:bg-gray-800 transition-colors duration-200 rounded-lg p-4">
+    <div className="group hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 rounded-lg p-4">
       <div className="flex items-start gap-4">
-        <div className="flex-shrink-0 my-auto w-8 h-8 bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium text-gray-300">
+        <div className="flex-shrink-0 my-auto w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-medium text-gray-700 dark:text-gray-300">
           {index + 1}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-4">
             <div className="flex-1">
-              <p className="text-sm font-medium text-gray-100 line-clamp-2 mb-2 group-hover:text-blue-400 transition-colors">
+              <p className="text-sm font-medium text-gray-900 dark:text-gray-100 line-clamp-2 mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                 {content.slice(0, 120)}...
               </p>
-              <div className="flex items-center gap-2 text-xs text-gray-400">
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                 <Avatar className="w-4 h-4">
                   <AvatarImage
                     src={workspace.userImage}
@@ -132,20 +132,20 @@ function TopPrompts() {
     return (
       <section className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
-          <p className="text-gray-400">Loading popular prompts...</p>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Top Prompts</h2>
+          <p className="text-gray-500 dark:text-gray-400">Loading popular prompts...</p>
         </div>
         <div className="space-y-4">
           {[1, 2, 3, 4].map((i) => (
             <div
               key={i}
-              className="animate-pulse p-4 border rounded-lg border-gray-700"
+              className="animate-pulse p-4 border rounded-lg border-gray-200 dark:border-gray-700"
             >
               <div className="flex items-start gap-4">
-                <div className="w-8 h-8 bg-gray-700 rounded-full"></div>
+                <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full"></div>
                 <div className="flex-1">
-                  <div className="h-4 bg-gray-700 rounded mb-2"></div>
-                  <div className="h-3 bg-gray-700 rounded w-1/3"></div>
+                  <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded mb-2"></div>
+                  <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded w-1/3"></div>
                 </div>
               </div>
             </div>
@@ -159,8 +159,8 @@ function TopPrompts() {
     return (
       <section className="w-full max-w-4xl mx-auto px-4 py-8">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
-          <p className="text-gray-400">
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Top Prompts</h2>
+          <p className="text-gray-500 dark:text-gray-400">
             No prompts available yet. Be the first to create something!
           </p>
         </div>
@@ -174,15 +174,15 @@ function TopPrompts() {
         <Badge variant="outline" className="mb-4 mx-auto">
           Pricing Plans
         </Badge>
-        <h2 className="text-2xl font-bold text-gray-100 mb-2">Top Prompts</h2>
-        <p className="text-gray-400 max-w-2xl mx-auto">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Top Prompts</h2>
+        <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto">
           Discover popular project ideas from our community
         </p>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <div className="flex justify-center mb-6">
-          <TabsList className="grid w-full max-w-md grid-cols-3 bg-gray-800 border border-gray-700">
+          <TabsList className="grid w-full max-w-md grid-cols-3 bg-gray-100 dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
             <TabsTrigger value="trending">
               <TrendingUp className="w-4 h-4 mr-1" />
               Trending
@@ -200,7 +200,7 @@ function TopPrompts() {
 
         {["trending", "popular", "recent"].map((tab) => (
           <TabsContent key={tab} value={tab}>
-            <div className="border rounded-lg divide-y divide-gray-700 border-gray-700">
+            <div className="border rounded-lg divide-y divide-gray-200 dark:divide-gray-700 border-gray-200 dark:border-gray-700">
               {
                 // @ts-ignore
                 categorizedData[tab].map((workspace: any, index: number) => (
@@ -210,7 +210,7 @@ function TopPrompts() {
                       index={index}
                       onCopy={handleCopyPrompt}
                     />
-                    <Separator className="bg-gray-700" />
+                    <Separator className="bg-gray-200 dark:bg-gray-700" />
                   </React.Fragment>
                 ))
               }
@@ -220,7 +220,7 @@ function TopPrompts() {
       </Tabs>
 
       {copiedPrompt && (
-        <div className="fixed bottom-4 right-14 bg-gray-900 text-gray-100 px-4 py-2 rounded-lg shadow-lg">
+        <div className="fixed bottom-4 right-14 bg-gray-800 text-gray-100 px-4 py-2 rounded-lg shadow-lg dark:bg-gray-900 dark:text-gray-100">
           Copied!
         </div>
       )}

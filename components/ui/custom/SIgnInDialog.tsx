@@ -18,6 +18,7 @@ import uuid4 from "uuid4";
 import { FcGoogle } from "react-icons/fc";
 import { Separator } from "../separator";
 import { Loader2 } from "lucide-react";
+import { useConvex } from "convex/react";
 
 
 function SIgnInDialog({
@@ -30,6 +31,7 @@ function SIgnInDialog({
   const { setUserDetails } = useContext(UserDetailContext);
   const CreateUser = useMutation(api.users.createUser);
   const [isLoading, setIsLoading] = React.useState(false);
+  const convex = useConvex();
 
   const googleLogin = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
@@ -53,12 +55,15 @@ function SIgnInDialog({
           picture: user?.picture,
           uid: uuid4(),
         });
-
+        
         if (typeof window !== "undefined") {
           localStorage.setItem("user", JSON.stringify(user));
         }
-
-        setUserDetails(userInfo?.data);
+        const result = await convex.query(api.users.GetUser, {
+                email: user?.email || "",
+              });
+              
+        setUserDetails(result);
         closeDialog();
       } catch (error) {
         console.error("Error during login:", error);
