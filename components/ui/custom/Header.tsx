@@ -11,22 +11,33 @@ import {
 } from "../dropdown-menu";
 import { LogOut, User, Settings } from "lucide-react";
 import SIgnInDialog from "./SIgnInDialog";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 function Header() {
   const { userDetails, setUserDetails } = useContext(UserDetailContext);
   const [openDialog, setOpenDialog] = React.useState(false);
+  const router = useRouter();
+  
   const handleLogin = () => {
     setOpenDialog(true);
   };
   const handleLogout = () => {
+    if (typeof window !== "undefined") {
+      localStorage.removeItem("user");
+      router.push("/");
+    }
     setUserDetails(null);
   };
 
   return (
     <div className="flex backdrop-blur-sm fixed top-0 w-full items-center border-b justify-between px-4 py-3 z-50 shadow-md">
-      <h1 className="text-xl cursor-pointer font-bold text-gray-900 dark:text-white">
-        Bolt.news
+      <Link href="/" className="flex items-center gap-2">
+            <h1 className="text-xl cursor-pointer font-bold text-gray-900 dark:text-white">
+        React.flow
       </h1>
+      </Link>
+
       
       <div className="flex items-center gap-4">
         {!userDetails ? (

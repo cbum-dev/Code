@@ -11,6 +11,8 @@ import { useRouter } from "next/navigation";
 import { useConvex } from "convex/react";
 import { Badge } from "../badge";
 import { BackgroundBeams, Highlight } from "../background-beams";
+import { Sidebar } from "lucide-react";
+import { useSidebar } from "../sidebar";
 
 function Hero() {
   const [userInput, setUserInput] = useState<string>("");
@@ -20,6 +22,7 @@ function Hero() {
   const CreateWorkspace = useMutation(api.workspace.CreateWorkspace);
   const router = useRouter();
   const convex = useConvex();
+  const {toggleSidebar} = useSidebar();
 
   const getWorkspaceData = async () => {
     try {
@@ -81,11 +84,12 @@ function Hero() {
 
   return (
     <div className="">
+      <Sidebar className="relative z-50 cursor-pointer h-5 mt-2 ml-1" onClick={toggleSidebar}/>
       <div className="flex flex-col items-center justify-center min-h-screen">
         <h1 className="text-4xl relative z-10 font-bold text-gray-900 dark:text-white">
           Welcome to {" "}
           <Highlight className="text-black dark:text-white">
-            Bolt.new
+            React.flow
           </Highlight>
         </h1>
 

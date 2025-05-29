@@ -82,7 +82,7 @@ function SIgnInDialog({
       <DialogContent className="sm:max-w-[425px] rounded-lg">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center text-gray-900 dark:text-white">
-            Welcome to Bolt.new
+            Welcome to React.flow
           </DialogTitle>
           <DialogDescription className="text-center text-gray-600 dark:text-gray-400 mt-2">
             Sign in to continue to your account

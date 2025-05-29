@@ -4,7 +4,7 @@ import React from 'react'
 
 function page() {
   return (
-    <div className='flex justify-between h-screen -mt-[64px]  relative'>
+    <div className='flex justify-between h-screen -mt-[64px] w-screen overflow-hidden  relative'>
         <ChatView/>
         <CodeView/>
     </div>

@@ -9,6 +9,8 @@ import { api } from "@/convex/_generated/api";
 import Header from "@/components/ui/custom/Header";
 import Footer from "@/components/ui/custom/Footer";
 import { ModeToggle } from "@/components/ui/custom/DarkMode";
+import { SidebarProvider } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/ui/custom/app-sidebar";
 
 interface Message {
   id: string;
@@ -29,7 +31,6 @@ function Provider({ children }: { children: React.ReactNode }) {
   const [Messages, setMessages] = useState<Message[]>([]);
   const [userDetails, setUserDetails] = useState<UserDetails>();
   const convex = useConvex();
-
   const isAuthenticated = async () => {
     if (typeof window !== "undefined") {
       const user = JSON.parse(localStorage.getItem("user") || "null");
@@ -42,6 +43,7 @@ function Provider({ children }: { children: React.ReactNode }) {
     return null;
   };
 
+
   useEffect(() => {
     isAuthenticated();
   }, []);
@@ -52,7 +54,12 @@ function Provider({ children }: { children: React.ReactNode }) {
         <UserDetailContext.Provider value={{ userDetails, setUserDetails }}>
           <MessageContext.Provider value={{ Messages, setMessages }}>
               <Header />
-              {children}
+              <SidebarProvider defaultOpen={false} >
+                <AppSidebar/>                
+
+                              {children}
+
+              </SidebarProvider>
               <Footer/>
               <ModeToggle />
 

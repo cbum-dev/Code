@@ -115,7 +115,7 @@ function Footer() {
               <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
                 <Zap className="w-5 h-5 text-primary-foreground" />
               </div>
-              <span className="text-xl font-bold text-foreground">Bolt</span>
+              <span className="text-xl font-bold text-foreground">React.flow</span>
             </div>
             
             <p className="text-muted-foreground max-w-md">
@@ -130,7 +130,7 @@ function Footer() {
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Mail className="w-4 h-4" />
-                <span>hello@bolt.new</span>
+                <span>hello@React.flow</span>
               </div>
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Phone className="w-4 h-4" />
@@ -144,7 +144,7 @@ function Footer() {
               <SocialLink href="https://twitter.com" icon={Twitter} label="Twitter" />
               <SocialLink href="https://github.com" icon={Github} label="GitHub" />
               <SocialLink href="https://linkedin.com" icon={Linkedin} label="LinkedIn" />
-              <SocialLink href="mailto:hello@bolt.new" icon={Mail} label="Email" />
+              <SocialLink href="mailto:hello@React.flow" icon={Mail} label="Email" />
             </div>
           </div>
 
@@ -186,7 +186,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-4 py-6">
         <div className="flex flex-col md:flex-row justify-between items-center gap-4">
           <div className="flex flex-col md:flex-row items-center gap-4 text-sm text-muted-foreground">
-            <span>© {currentYear} Bolt. All rights reserved.</span>
+            <span>© {currentYear} React.flow. All rights reserved.</span>
             <div className="flex items-center gap-4">
               <a href="/privacy" className="hover:text-foreground transition-colors">
                 Privacy Policy
@@ -203,7 +203,7 @@ function Footer() {
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <span>Made with</span>
             <Heart className="w-4 h-4 text-red-500 fill-current" />
-            <span>by the Bolt team</span>
+            <span>by the React.flow team</span>
           </div>
         </div>
       </div>

@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Loader2, Send, FileText, Bot } from "lucide-react";
 import ReactMarkdown from "react-markdown";
+import { useSidebar } from "../sidebar";
+import { Sidebar } from "lucide-react";
 
 function ChatView() {
   const { id } = useParams();
@@ -27,7 +29,7 @@ function ChatView() {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const messagesContainerRef = useRef(null);
   const UpdateMessage = useMutation(api.workspace.UpdateMessages);
-
+  const { toggleSidebar } = useSidebar();
   const messages = Messages || [];
 
   useEffect(() => {
@@ -40,7 +42,7 @@ function ChatView() {
     }
   }, [userInput]);
 
-  const onGenerate = async (input:any) => {
+  const onGenerate = async (input: any) => {
     if (!userDetails?.name || !input.trim()) return;
 
     const msg = {
@@ -82,20 +84,20 @@ function ChatView() {
 
   const getAi = async () => {
     if (isLoading || messages.length === 0) return;
-    
+
     setIsLoading(true);
     try {
       const lastUserMessage = messages[messages.length - 1];
-      
-      const result = await axios.post("/api/ai-chat", { 
-        prompt: lastUserMessage.content 
+
+      const result = await axios.post("/api/ai-chat", {
+        prompt: lastUserMessage.content,
       });
-      
+
       const aiMessage = {
         role: "assistant",
         content: result.data.result,
       };
-      
+
       setMessages((prev) => [...(prev || []), aiMessage]);
       await UpdateMessage({
         message: [...messages, aiMessage],
@@ -103,12 +105,12 @@ function ChatView() {
       });
     } catch (error) {
       console.error("Error getting AI response:", error);
-      
+
       const errorMessage = {
         role: "assistant",
         content: "Sorry, I encountered an error. Please try again.",
       };
-      
+
       setMessages((prev) => [...(prev || []), errorMessage]);
     } finally {
       setIsLoading(false);
@@ -126,7 +128,12 @@ function ChatView() {
 
   return (
     <div className="flex flex-col w-2/5 mt-auto h-[calc(100vh-64px)]">
-      <div 
+      <Sidebar
+        className="relative z-50 cursor-pointer h-5 mt-2 ml-1"
+        onClick={toggleSidebar}
+      />
+
+      <div
         ref={messagesContainerRef}
         className="flex-1 overflow-y-auto p-4 space-y-4 scrollbar-hide"
       >
@@ -163,9 +170,7 @@ function ChatView() {
                     </div>
                   )}
                   <div className="flex-1">
-                    <ReactMarkdown>
-                      {message.content}
-                    </ReactMarkdown>
+                    <ReactMarkdown>{message.content}</ReactMarkdown>
                   </div>
                   {message.role === "user" && (
                     <div className="flex-shrink-0">

@@ -108,7 +108,7 @@ const NotFoundPage = () => {
 
         {/* Subtle branding */}
         <div className="mt-6 text-gray-600 text-xs">
-          Built with ⚡ Bolt
+          Built with ⚡ React.flow
         </div>
       </div>
     </div>
